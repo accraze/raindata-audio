@@ -7,13 +7,19 @@ import time
 from pythonosc import osc_message_builder
 from pythonosc import udp_client
 
-def send_msg(client, note, msg=None):
+def send_msg(client, note, msg=None, sleep=0.5):
     client.send_message('/weather', note)
-    time.sleep(1)
+    time.sleep(sleep)
 
-def generate_tone_melody(notes, num):
+def generate_tone_melody(client, notes, num):
     for i in range(num):
+        if i > 11:
+            i = i - 11
         send_msg(client, int(notes[i]))
+
+def send_eod_signal(client):
+    client.send_message('/weather', 24)
+    time.sleep(.5)
 
 
 if __name__ == "__main__":
@@ -35,14 +41,13 @@ if __name__ == "__main__":
                     notes = c.matrix[0] # get tones from top row
                     num = int(row.split()[x]) # get each hour's rain data
                     print(num)
-                    if num == 0: 
-                        # if no rain this hour
-                        print('ZERO!!!!!!')
+                    if num == 0:
+                        send_msg(client, 0, sleep=0.1)
                         continue
                     elif num > 12:
                         # if more than 12, the tone 
                         # will be the difference of the two.
                         num = num - 12
-                    generate_tone_melody(notes, num)
-
+                    generate_tone_melody(client, notes, num)
+                send_eod_signal(client)
                 # end of day
