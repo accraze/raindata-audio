@@ -8,16 +8,30 @@ from pythonosc import osc_message_builder
 from pythonosc import udp_client
 
 def send_msg(client, note, msg=None, sleep=0.5):
-    client.send_message('/weather', note)
+    """
+    sends an OSC message to the
+    /weather address
+    """
+    client.send_message('/weather', note, )
     time.sleep(sleep)
 
 def generate_tone_melody(client, notes, num):
+    """
+    Selects the tone row length
+    depending on the rainfall value
+    and then sends each to be
+    sent over OSC
+    """
     for i in range(num):
         if i > 11:
             i = i - 11
         send_msg(client, int(notes[i]))
 
 def send_eod_signal(client):
+    """
+    Send note 24 to
+    signal the end of a day
+    """
     client.send_message('/weather', 24)
     time.sleep(.5)
 
