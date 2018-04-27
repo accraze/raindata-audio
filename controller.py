@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     client = udp_client.SimpleUDPClient(args.ip, args.port) # osc client.
 
-    with open('data.txt') as data:
+    with open('data/data.txt') as data:
             content = data.readlines()
             c = Composer()
             for row in content:
